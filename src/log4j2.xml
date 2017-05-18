@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+<!-- monitorInterval = "300" 表示每5分钟读取配置文件 -->
+<configuration status="INFO">
+	<appenders>
+		<!--<properties>-->
+			<!--&lt;!&ndash;<property name = "LOG_NAME">${sys:log4j2.saveDirectory}</property>&ndash;&gt;-->
+			<!--<property name = "FILE_NAME">${sys:log4j2.saveFile}</property>-->
+		<!--</properties>-->
+		<Console name="CONSOLE" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+		</Console>
+		<RollingRandomAccessFile name="ROLLING" fileName="/tmp/${sys:log4j2.saveFile}.log"
+			filePattern="/tmp/$${date:yyyy-MM}/${sys:log4j2.saveFile}-%d{yyyy-MM-dd}-%i.log">
+			<PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+			<Policies>
+				<!-- interval 跟前面${FILE_NAME}-%d{yyyy-MM-dd} 有关，这里是10,表示会备份10天的log-->
+				<TimeBasedTriggeringPolicy modulate="true" interval="10" />
+				<SizeBasedTriggeringPolicy size="5120000 KB" />
+			</Policies>
+			<DefaultRolloverStrategy max="20" />
+		</RollingRandomAccessFile>
+	</appenders>
+	<loggers>
+		<root level="debug">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="ROLLING" />
+		</root>
+	</loggers>
+</configuration>
