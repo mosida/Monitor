@@ -15,6 +15,8 @@ public class Test {
 
 //        LoginByWeb.loginByChrome();
 //        PhoneUtils.pushFile(tempDirectory+tempFile, targetFile);
-        PhoneUtils.startMissionService();
+//        PhoneUtils.startMissionService();
+        String fileName = "/home/mosida/Documents/Geny/Backups/TB-170471";
+        PhoneUtils.copyBackupData(fileName);
     }
 }

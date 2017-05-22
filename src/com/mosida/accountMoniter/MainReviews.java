@@ -27,10 +27,12 @@ public class MainReviews {
     //    public static String reviewFile = "com.blhd.tw";
 //    public static String appCreator = "springgame";
     public static String reviewFile = "com.movga.force.na.gp";
-    public static String appCreator = "Movga Games";
-//    public static String vpnCountry = "US";
+//    public static String appCreator = "Movga Games";
+    public static String appCreator = "Active";
+
+    //    public static String vpnCountry = "US";
     // device
-    public static String originDevice = "GoogleNexus4-en-dev";
+    public static String originDevice = "ActivePhone";
     public static String targetDevice = "myOffer";
 
     public static int num = 10;
@@ -47,6 +49,8 @@ public class MainReviews {
     public static List<GmailInfo> gmails;
     public static List<String> country;
 
+
+    public static final String backupFile = "/home/mosida/Documents/Geny/Backups/TB-";
 
     public static void main(String[] args) throws Exception {
         // log 配置
@@ -75,18 +79,18 @@ public class MainReviews {
             logger.info("评论文件没有内容 : "+ gmails.size());
         }
         // 加载上次评论的序号
-        int lastComment = Comment.loadLastComment(lastCommentFile);
+//        int lastComment = Comment.loadLastComment(lastCommentFile);
 
         // country
         country = new ArrayList<>();
-//        country.add("nlam");
-//        country.add("tw3");
+        country.add("tw1");
+        country.add("tw3");
 
 
         for (int i=0; i<num; i++){
             // 更换ip
 //            country = VpnParseUtils.getVpnSupportCountry(vpnCountry);
-//            IpUtils.changeVpn(country);
+            IpUtils.changeVpn(country);
             // 登录帐号
             if (LoginByWeb.loginByChrome(gmails.get(i))){
                 logger.info("帐号登录成功");
@@ -94,15 +98,16 @@ public class MainReviews {
                 logger.info("帐号登录失败");
                 return;
             }
-            // 获取评论
-            if (lastComment == 0 || lastComment >= comments.size()){
-                lastComment = 0;
-            }
-            logger.info("lastComment is : "+ lastComment);
-            lastComment++;
+//            // 获取评论
+//            if (lastComment == 0 || lastComment >= comments.size()){
+//                lastComment = 0;
+//            }
+//            logger.info("lastComment is : "+ lastComment);
+//            lastComment++;
 
             // 创建文件
-            String accountData = gmails.get(i).email + ","+gmails.get(i).password+","+gmails.get(i).gid+","+comments.get(lastComment)+","+reviewFile+","+appCreator;
+//            String accountData = gmails.get(i).email + ","+gmails.get(i).password+","+gmails.get(i).gid+","+comments.get(lastComment)+","+reviewFile+","+appCreator;
+            String accountData = gmails.get(i).email + ","+gmails.get(i).password+","+gmails.get(i).gid+",-1,"+reviewFile+","+appCreator;
             FileUtils.writeFile(tempDirectory+tempFile, accountData, false);
             // copy geny 模拟器
             GenyUtils.deleteGeny(targetDevice);
@@ -119,24 +124,24 @@ public class MainReviews {
             // 做评论任务
             GenyUtils.pushFile(tempDirectory+tempFile, targetFile);
             PhoneUtils.startMissionService();
-            Thread.sleep(40000);
+            Thread.sleep(150000);
+//            PhoneUtils.startBackupService();
             // CP 内容到本地
-            /**
-             * 暂时没写好
-             */
+            String backupDir = backupFile+gmails.get(i).gid;
+            PhoneUtils.copyBackupData(backupDir);
             // 停止模拟器
             GenyUtils.stopGeny(targetDevice);
-            // 填写评论
-            Comment.writeLastComment(lastCommentFile, String.valueOf(lastComment));
+//          //   填写评论
+//            Comment.writeLastComment(lastCommentFile, String.valueOf(lastComment));
             // 记录到本地
-            StringBuffer recordSB = new StringBuffer();
-            recordSB.append(accountData);
-            recordSB.append(",");
-            recordSB.append(getTimeString());
-            GmailAccounts.writeReviewByAccount(reviewFile, recordSB.toString());
+//            StringBuffer recordSB = new StringBuffer();
+//            recordSB.append(accountData);
+//            recordSB.append(",");
+//            recordSB.append(getTimeString());
+//            GmailAccounts.writeReviewByAccount(reviewFile, recordSB.toString());
         }
 
-//        IpUtils.exitVpn();
+        IpUtils.exitVpn();
 
     }
 
