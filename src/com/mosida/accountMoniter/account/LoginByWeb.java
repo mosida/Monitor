@@ -76,13 +76,16 @@ public class LoginByWeb {
             sleepQuick();
             try{
                 WebElement webElement1 = driver.findElement(By.ByClassName.className("vdE7Oc"));
-                webElement1.click();
-                sleepQuick();
+                if (webElement1!=null){
+                    webElement1.click();
+                    sleepQuick();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
                 driver.findElement(By.id("knowledge-preregistered-email-response")).sendKeys(gmailInfo.recMail);
                 sleepSecond();
                 driver.findElement(By.id("next")).click();
-            }catch (Exception e){
-                e.printStackTrace();
             }
         }
         sleepSlow();

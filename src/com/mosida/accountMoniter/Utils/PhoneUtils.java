@@ -44,7 +44,6 @@ public class PhoneUtils {
             ShellUtils.CommandResult deleteResult = ShellUtils.execCommand(deleteCommands, false, true);
         }else{
             System.out.println("file is no exists!");
-            return;
         }
         String[] stopCommands = new String[1];
         stopCommands[0] = ADB + " pull /sdcard/TitaniumBackup "+fileName;
