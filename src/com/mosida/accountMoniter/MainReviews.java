@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ public class MainReviews {
     public static List<String> country;
 
 
-    public static final String backupFile = "/home/mosida/Documents/Geny/Backups/TB-";
+    public static final String backupDirOnLocal = "/home/mosida/Documents/Geny/Backups/TB-";
+    public static final String backupDirOnDevice = "/sdcard/TitaniumBackup";
 
     public static void main(String[] args) throws Exception {
         // log 配置
@@ -93,12 +95,18 @@ public class MainReviews {
             // 更换ip
 //            country = VpnParseUtils.getVpnSupportCountry(vpnCountry);
             IpUtils.changeVpn(country);
-            // 登录帐号
-            if (LoginByWeb.loginByChrome(gmails.get(i))){
-                logger.info("帐号登录成功");
-            }else{
-                logger.info("帐号登录失败");
-                return;
+            // 检查本地是否已经有模拟器资源进行恢复
+            String localDir = backupDirOnLocal + gmails.get(i).gid;
+            File dataFile = new File(localDir);
+            if (!dataFile.exists()){
+                logger.info("local dir is not exist. go to web login.");
+                // 登录帐号
+                if (LoginByWeb.loginByChrome(gmails.get(i))){
+                    logger.info("帐号登录成功");
+                }else{
+                    logger.info("帐号登录失败");
+                    return;
+                }
             }
             // 获取评论
             if (nowComment == 0 || nowComment >= comments.size()){
@@ -122,14 +130,31 @@ public class MainReviews {
             });
             t.start();
             Thread.sleep(15000);
+
+            if (dataFile.exists()){
+                // push restore sleep
+                GenyUtils.pushFile(localDir, backupDirOnDevice);
+                PhoneUtils.startBackupService();
+                Thread.sleep(20000);
+                GenyUtils.stopGeny(targetDevice);
+                Thread.sleep(10000);
+                // 打开模拟器
+                Thread t2 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GenyUtils.startGeny(targetDevice);
+                    }
+                });
+                t2.start();
+                Thread.sleep(15000);
+            }
             // 做评论任务
             GenyUtils.pushFile(tempDirectory+tempFile, targetFile);
             PhoneUtils.startMissionService();
             Thread.sleep(180000);
 //            PhoneUtils.startBackupService();
             // CP 内容到本地
-            String backupDir = backupFile+gmails.get(i).gid;
-            PhoneUtils.copyBackupData(backupDir);
+            PhoneUtils.copyBackupData(localDir);
             // 停止模拟器
             GenyUtils.stopGeny(targetDevice);
 //          //   填写评论

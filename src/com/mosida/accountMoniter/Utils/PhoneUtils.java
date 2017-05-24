@@ -10,8 +10,6 @@ public class PhoneUtils {
     public static final String ADB = "/home/mosida/Android/Sdk/platform-tools/adb";
 
     public static void startMissionService() {
-
-
         String[] stopCommands = new String[3];
         stopCommands[0] = "sleep 1";
         stopCommands[1] = ADB + " shell am startservice -n com.mosida.autome/com.mosida.autome.MissionService";
@@ -24,15 +22,14 @@ public class PhoneUtils {
     }
 
     public static void startBackupService() {
-        String[] stopCommands = new String[3];
-        stopCommands[0] = "sleep 1";
-        stopCommands[1] = ADB + " shell am startservice -n com.mosida.autome/com.mosida.autome.BackupService";
-        stopCommands[2] = "sleep 60";
-        ShellUtils.CommandResult startResult = ShellUtils.execCommand(stopCommands, false, true);
+        String[] backupCommands = new String[2];
+        backupCommands[0] = "sleep 1";
+        backupCommands[1] = ADB + " shell am startservice -n com.mosida.autome/com.mosida.autome.BackupService";
+        ShellUtils.CommandResult backupResult = ShellUtils.execCommand(backupCommands, false, true);
         StringBuilder sb = new StringBuilder();
-        sb.append("startResult.successMsg : " + startResult.successMsg)
-                .append("\n errorMsg : " + startResult.errorMsg)
-                .append("\n result : " + startResult.result);
+        sb.append("backupResult.successMsg : " + backupResult.successMsg)
+                .append("\n errorMsg : " + backupResult.errorMsg)
+                .append("\n result : " + backupResult.result);
     }
 
     public static void copyBackupData(String fileName) {
