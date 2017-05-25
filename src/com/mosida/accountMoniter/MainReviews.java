@@ -133,6 +133,7 @@ public class MainReviews {
 
             if (dataFile.exists()){
                 // push restore sleep
+                GenyUtils.pushFile(tempDirectory+tempFile, targetFile);
                 GenyUtils.pushFile(localDir, backupDirOnDevice);
                 PhoneUtils.startBackupService();
                 Thread.sleep(20000);
@@ -146,13 +147,15 @@ public class MainReviews {
                     }
                 });
                 t2.start();
-                Thread.sleep(15000);
+                Thread.sleep(20000);
+            }else{
+                GenyUtils.pushFile(tempDirectory+tempFile, targetFile);
             }
             // 做评论任务
-            GenyUtils.pushFile(tempDirectory+tempFile, targetFile);
             PhoneUtils.startMissionService();
-            Thread.sleep(180000);
-//            PhoneUtils.startBackupService();
+            Thread.sleep(150000);
+            PhoneUtils.startBackupService();
+            Thread.sleep(60000);
             // CP 内容到本地
             PhoneUtils.copyBackupData(localDir);
             // 停止模拟器
