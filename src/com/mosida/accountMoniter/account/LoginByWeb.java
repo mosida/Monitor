@@ -31,91 +31,100 @@ public class LoginByWeb {
         System.setProperty("webdriver.chrome.driver", "chromedriver");
         //新建一个 Chrome 浏览器实例
         WebDriver driver = new ChromeDriver(capabilities);
-        //// 等待 10s
-        //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        //打开 Google
-        driver.get("https://www.google.com?hl=en");
-        // 点击登录
-        WebElement webElement = null;
-        webElement = driver.findElement(By.linkText("Sign in"));
-        webElement.click();
+        try {
+            //// 等待 10s
+            //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            //打开 Google
+            driver.get("https://www.google.com?hl=en");
+            // 点击登录
+            WebElement webElement = null;
+            webElement = driver.findElement(By.linkText("Sign in"));
+            webElement.click();
 
-        // 旧版登录入口
-        if (driver.getCurrentUrl().contains("accounts.google.com/ServiceLogin?")){
-            driver.findElement(By.id("Email")).clear();
-            driver.findElement(By.id("Email")).sendKeys(gmailInfo.email);
-            sleepSecond();
-            driver.findElement(By.id("next")).click();
-            sleepQuick();
-            driver.findElement(By.name("Passwd")).clear();
-            driver.findElement(By.name("Passwd")).sendKeys(gmailInfo.password);
-            sleepSecond();
-            driver.findElement(By.id("signIn")).click();
-            sleepSecond();
-            driver.findElement(By.xpath(".//*[text()='Confirm your recovery email']")).click();
-            sleepSecond();
-            driver.findElement(By.name("email")).sendKeys(gmailInfo.recMail);
-            sleepQuick();
-            driver.findElement(By.id("submit")).click();
+            // 旧版登录入口
+            if (driver.getCurrentUrl().contains("accounts.google.com/ServiceLogin?")) {
+                driver.findElement(By.id("Email")).clear();
+                driver.findElement(By.id("Email")).sendKeys(gmailInfo.email);
+                sleepSecond();
+                driver.findElement(By.id("next")).click();
+                sleepQuick();
+                driver.findElement(By.name("Passwd")).clear();
+                driver.findElement(By.name("Passwd")).sendKeys(gmailInfo.password);
+                sleepSecond();
+                driver.findElement(By.id("signIn")).click();
+                sleepSecond();
+                driver.findElement(By.xpath(".//*[text()='Confirm your recovery email']")).click();
+                sleepSecond();
+                driver.findElement(By.name("email")).sendKeys(gmailInfo.recMail);
+                sleepQuick();
+                driver.findElement(By.id("submit")).click();
 
-        }else{
-            driver.findElement(By.id("identifierId")).clear();
-            driver.findElement(By.id("identifierId")).sendKeys(gmailInfo.email);
-            sleepSecond();
-            driver.findElement(By.id("identifierNext")).click();
-            sleepQuick();
-            driver.findElement(By.name("password")).clear();
-            driver.findElement(By.name("password")).sendKeys(gmailInfo.password);
-            sleepSecond();
-            driver.findElement(By.id("passwordNext")).click();
+            } else {
+                driver.findElement(By.id("identifierId")).clear();
+                driver.findElement(By.id("identifierId")).sendKeys(gmailInfo.email);
+                sleepSecond();
+                driver.findElement(By.id("identifierNext")).click();
+                sleepQuick();
+                driver.findElement(By.name("password")).clear();
+                driver.findElement(By.name("password")).sendKeys(gmailInfo.password);
+                sleepSecond();
+                driver.findElement(By.id("passwordNext")).click();
+                sleepSlow();
+                if (driver.getCurrentUrl().contains("hl=en&gws_rd")) {
+                    driver.quit();
+                    return true;
+                }
+                sleepQuick();
+                try {
+                    WebElement webElement1 = driver.findElement(By.ByClassName.className("vdE7Oc"));
+                    if (webElement1 != null) {
+                        webElement1.click();
+                        sleepQuick();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        driver.findElement(By.id("knowledge-preregistered-email-response")).sendKeys(gmailInfo.recMail);
+                        sleepSecond();
+                        driver.findElement(By.id("next")).click();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             sleepSlow();
-            if (driver.getCurrentUrl().contains("hl=en&gws_rd")){
+            sleepSlow();
+
+            if (driver.getCurrentUrl().contains("https://myaccount.google.com/interstitials/recoveryoptions?hl=en")) {
+                // 销毁
                 driver.quit();
                 return true;
             }
-            sleepQuick();
-            try{
-                WebElement webElement1 = driver.findElement(By.ByClassName.className("vdE7Oc"));
-                if (webElement1!=null){
-                    webElement1.click();
-                    sleepQuick();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }finally {
-                driver.findElement(By.id("knowledge-preregistered-email-response")).sendKeys(gmailInfo.recMail);
-                sleepSecond();
-                driver.findElement(By.id("next")).click();
+            if (driver.getCurrentUrl().contains("https://www.google.com/?hl=en")) {
+                // 销毁
+                driver.quit();
+                return true;
             }
-        }
-        sleepSlow();
-        sleepSlow();
-
-        if (driver.getCurrentUrl().contains("https://myaccount.google.com/interstitials/recoveryoptions?hl=en")){
+            if (driver.getCurrentUrl().contains("newfeatures")) {
+                // 销毁
+                driver.quit();
+                return true;
+            }
+            if (driver.getCurrentUrl().contains("hl=en&gws_rd")) {
+                // 销毁
+                driver.quit();
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            //MainReviews.logger.info("Fail : "+driver.getCurrentUrl());
             // 销毁
             driver.quit();
-            return true;
-        }
-        if (driver.getCurrentUrl().contains("https://www.google.com/?hl=en")){
-            // 销毁
-            driver.quit();
-            return true;
-        }
-        if (driver.getCurrentUrl().contains("newfeatures")){
-            // 销毁
-            driver.quit();
-            return true;
-        }
-        if (driver.getCurrentUrl().contains("hl=en&gws_rd")){
-            // 销毁
-            driver.quit();
-            return true;
         }
 
-        MainReviews.logger.info("Fail : "+driver.getCurrentUrl());
-        // 销毁
-        driver.quit();
-        return false;
+        return true;
     }
 
     public static void sleepSlow(){

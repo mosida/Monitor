@@ -4,9 +4,7 @@ import com.mosida.accountMoniter.Utils.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,26 @@ public class Comment {
         return Integer.valueOf(line);
     }
 
-    public static void writeLastComment(String file, String num){
-        FileUtils.writeFile(file, num, false);
+    public static void writeLastComment(String filePath, String num){
+        try {
+            File f = new File("./src/com/mosida/accountMoniter/account/"+filePath);
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            System.out.println(f.getPath());
+
+            OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(f));
+            BufferedWriter writer = new BufferedWriter(write);
+            writer.write(num);
+            writer.flush();
+            write.close();
+            writer.close();
+
+            System.out.println("Done");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
+
 }
