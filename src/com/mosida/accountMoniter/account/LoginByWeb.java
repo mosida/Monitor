@@ -75,6 +75,27 @@ public class LoginByWeb {
                     return true;
                 }
                 sleepQuick();
+                // /signin/v2/challenge/iap?
+                if (driver.getCurrentUrl().contains("signin/v2/challenge/iap")){
+                    driver.findElement(By.id("phoneNumberId")).clear();
+                    driver.findElement(By.id("phoneNumberId")).sendKeys("+8615521312103");
+                    driver.findElement(By.id("idvanyphonecollectNext")).click();
+                    sleepQuick();
+                    //idvAnyPhonePin
+                    driver.findElement(By.id("idvAnyPhonePin")).clear();
+                    driver.findElement(By.id("idvAnyPhonePin")).sendKeys("580165");
+                    driver.findElement(By.id("idvanyphoneverifyNext")).click();
+
+                    // https://myaccount.google.com/recovery/email?
+                    // password name
+                    // passwordNext
+                    driver.findElement(By.xpath(".//*[text()='Add recovery email']")).click();
+                    // whsOnd zHQkBf ===
+                    // RveJvd snByac === done
+
+                }
+                sleepQuick();
+
                 try {
                     WebElement webElement1 = driver.findElement(By.ByClassName.className("vdE7Oc"));
                     if (webElement1 != null) {
